@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+
+  jvm-demo-api-java11:
+    container_name: jvm-java11-container
+    hostname: jvm-demo-java11
+    mem_limit: 512M
+    build:
+      context: .
+      dockerfile: Dockerfile-Java11
+    ports:
+     - 8080:8080
+     - 9010:9010
+
+
+  jvm-demo-api-java17:
+    container_name: jvm-java17-container
+    hostname: jvm-demo-java17
+    mem_limit: 512M
+    build:
+      context: .
+      dockerfile: Dockerfile-Java17
+    ports:
+     - 8090:8080
+     - 9020:9010
