@@ -16,7 +16,7 @@ public class CheckIBANController {
     private final IBANCheckService ibanCheckService;
 
     @GetMapping("/iban/checkIban")
-    public ResponseEntity<Boolean> checkIban(@RequestParam String ibanToCheck) {
+    public ResponseEntity<IBANCheckResultDto> checkIban(@RequestParam String ibanToCheck) {
         return ResponseEntity.ok().body(ibanCheckService.isIBANValid(ibanToCheck));
     }
 

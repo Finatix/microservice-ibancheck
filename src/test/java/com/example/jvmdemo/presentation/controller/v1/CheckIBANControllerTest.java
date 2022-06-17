@@ -1,5 +1,6 @@
 package com.example.jvmdemo.presentation.controller.v1;
 
+import com.example.jvmdemo.presentation.dto.IBANCheckResultDto;
 import com.example.jvmdemo.presentation.dto.IBANDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,7 +43,23 @@ class CheckIBANControllerTest {
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
-                .expectBody(Boolean.class).isEqualTo(true);
+                .expectBody(IBANCheckResultDto.class).value(matcher -> assertTrue(matcher.isValid()));
+    }
+
+    @Test
+    @DisplayName("Test checkIBAN REST-Endpoint with a valid IBAN")
+    public void testCheckIbanWithValidIbanSecondTest() {
+        webTestClient.get()
+                .uri(uriBuilder ->
+                        uriBuilder
+                                .path("/v1/iban/checkIban")
+                                .queryParam("ibanToCheck", "DE76860555921010001350")
+                                .build()
+                )
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(IBANCheckResultDto.class).value(matcher -> assertTrue(matcher.isValid()));
     }
 
     @Test
@@ -55,7 +75,22 @@ class CheckIBANControllerTest {
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
-                .expectBody(Boolean.class).isEqualTo(false);
+                .expectBody(IBANCheckResultDto.class).value(matcher -> assertFalse(matcher.isValid()));
+    }
+
+    @Test
+    @DisplayName("Test checkIBAN REST-Endpoint with an invalid IBAN")
+    public void testCheckIbanWithInvalidIbanWrongFormat() {
+        webTestClient.get()
+                .uri(uriBuilder ->
+                        uriBuilder
+                                .path("/v1/iban/checkIban")
+                                .queryParam("ibanToCheck", "A8391")
+                                .build()
+                )
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
     }
 
     @Test

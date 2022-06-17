@@ -15,27 +15,21 @@ import java.util.Random;
 public class IBANCheckService {
 
     // check only german iban by now
-    public boolean isIBANValid(final String iban) {
+    public IBANCheckResultDto isIBANValid(final String iban) {
         if (null == iban) {
             throw new IBANWrongException("NO IBAN given");
         }
 
         if (!iban.startsWith("DE") || iban.length() != 22) {
-            return false;
+            throw new IBANWrongException("IBAN entered is not valid: " + iban);
         }
 
-        return isCheckDigitCorrect(iban.substring(4), iban.substring(2, 4));
+        return generateNewCheckResult(new IBANDto(iban));
     }
 
     public List<IBANCheckResultDto> isIBANValidFromList(List<IBANDto> ibanListToCheck) {
         List<IBANCheckResultDto> result = new ArrayList<>();
-
-        ibanListToCheck.forEach(iban -> result.add(new IBANCheckResultDto(
-                iban.getIban(),
-                isIBANValid(iban.getIban()),
-                extractBankCodeFromIBAN(iban.getIban()),
-                extractAccountNumberFromIBAN(iban.getIban()))));
-
+        ibanListToCheck.forEach(iban -> result.add(generateNewCheckResult(iban)));
         return result;
     }
 
@@ -47,6 +41,14 @@ public class IBANCheckService {
         }
 
         return result;
+    }
+
+    private IBANCheckResultDto generateNewCheckResult(final IBANDto iban) {
+        return new IBANCheckResultDto(
+                iban.getIban(),
+                isCheckDigitCorrect(iban.getIban().substring(4), iban.getIban().substring(2, 4)),
+                extractBankCodeFromIBAN(iban.getIban()),
+                extractAccountNumberFromIBAN(iban.getIban()));
     }
 
     /**
