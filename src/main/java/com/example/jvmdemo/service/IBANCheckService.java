@@ -3,6 +3,7 @@ package com.example.jvmdemo.service;
 import com.example.jvmdemo.errorhandling.exception.IBANWrongException;
 import com.example.jvmdemo.presentation.dto.IBANCheckResultDto;
 import com.example.jvmdemo.presentation.dto.IBANDto;
+import com.example.jvmdemo.service.calculators.FrenchIBANCalculator;
 import com.example.jvmdemo.service.calculators.GermanIBANCalculator;
 import com.example.jvmdemo.service.calculators.IBANCalculator;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class IBANCheckService {
 
     public IBANCheckService() {
         ibanCalculators.put(GermanIBANCalculator.COUNTRY_CODE, new GermanIBANCalculator());
+        ibanCalculators.put(FrenchIBANCalculator.COUNTRY_CODE, new FrenchIBANCalculator());
     }
 
     // check only german iban by now
@@ -42,8 +44,8 @@ public class IBANCheckService {
     public List<IBANDto> generateTestData(int numberOfIbans) {
         List<IBANDto> result = new ArrayList<>();
 
-        IBANCalculator calculator = findIbanCalculatorByCountryCode("DE");
-        for(int i = 0; i < numberOfIbans; i++) {
+        IBANCalculator calculator = findIbanCalculatorByCountryCode(GermanIBANCalculator.COUNTRY_CODE);
+        for (int i = 0; i < numberOfIbans; i++) {
             result.add(calculator.generateRandomIban());
         }
 
@@ -51,7 +53,7 @@ public class IBANCheckService {
     }
 
     private IBANCalculator findIbanCalculatorByCountryCode(final String ibanString) {
-        String countryCode = ibanString.substring(0, 2);
+        String countryCode = ibanString.substring(0, 2).toUpperCase();
 
         if (ibanCalculators.containsKey(countryCode)) {
             return ibanCalculators.get(countryCode);

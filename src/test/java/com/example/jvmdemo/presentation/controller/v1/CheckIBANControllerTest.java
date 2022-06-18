@@ -112,4 +112,15 @@ class CheckIBANControllerTest {
                 .is2xxSuccessful();
     }
 
+    @Test
+    @DisplayName("Generate 10 Random IBANs")
+    public void testGenerateRadomIBANs() {
+        webTestClient.get()
+                .uri("/v1/iban/generateTestData?numberOfIbans=10")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful();
+    }
+
 }

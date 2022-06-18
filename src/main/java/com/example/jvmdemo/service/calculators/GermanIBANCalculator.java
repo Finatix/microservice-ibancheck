@@ -11,7 +11,9 @@ public class GermanIBANCalculator implements IBANCalculator {
     public static final String COUNTRY_CODE = "DE";
 
     public IBANCheckResultDto checkIban(IBANDto ibanDto) {
-        if (!ibanDto.getIban().startsWith(COUNTRY_CODE) || ibanDto.getIban().length() != 22) {
+        if (null == ibanDto.getIban()
+                || !ibanDto.getIban().startsWith(COUNTRY_CODE)
+                || ibanDto.getIban().length() != 22) {
             throw new IBANWrongException("IBAN entered is not valid: " + ibanDto.getIban());
         }
 
@@ -52,18 +54,10 @@ public class GermanIBANCalculator implements IBANCalculator {
     }
 
     private String extractBankCodeFromIBAN(final String iban) {
-        if (null == iban || iban.length() < 12) {
-            return "";
-        }
-
         return iban.substring(4,12);
     }
 
     private String extractAccountNumberFromIBAN(final String iban) {
-        if (null == iban || iban.length() < 13) {
-            return "";
-        }
-
         return iban.substring(13);
     }
 }
