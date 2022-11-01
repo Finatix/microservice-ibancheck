@@ -90,7 +90,7 @@ class CheckIBANControllerTest {
                 )
                 .exchange()
                 .expectStatus()
-                .isBadRequest();
+                .isForbidden();
     }
 
     @Test
